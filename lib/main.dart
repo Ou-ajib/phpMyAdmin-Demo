@@ -17,7 +17,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   String title;
-
+  var d;
   @override
   void initState() { 
     super.initState();
@@ -25,10 +25,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
   
   _getData() async{
-    http.Response response = await http.get('http://phpmyadminwithflutter.000webhostapp.com/get.php');
+    http.Response response = await http.get('http://localhost/phpWithFlutter/get.php');
     final data = json.decode(response.body);
-    // print(data);
-    setState(() => title = data['title']);
+    setState(() {
+      d = data;
+    });
   }
 
   @override
@@ -37,8 +38,14 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text('phpMyAdmin Demo'),
       ),
-      body: Center(
-        child: Text(title??'Loading...'),
+      body: ListView.builder(
+        itemCount: d == null ? 0 : d.toList().length,
+        itemBuilder: (context, i){
+          return ListTile(
+            title: Text(d[i]['title']??''),
+            subtitle: Text(d[i]['subtitle']??''),
+          );
+        },
       ),
       floatingActionButton: FloatingActionButton(
         tooltip: 'Increment',
